@@ -6,7 +6,6 @@
 #define MONITOR_MESSAGE_H
 
 #include <string>
-#include <utility>
 
 enum Priority {
     HIGH, LOW

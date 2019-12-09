@@ -56,6 +56,7 @@ public:
         if (count_ == BUFFER_SIZE_ - 1) {
             signal(full_);
         }
+
         leave();
         return mes;
     }
