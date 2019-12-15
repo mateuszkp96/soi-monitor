@@ -1,7 +1,3 @@
-//
-// Created by mateusz on 12/9/19.
-//
-
 #ifndef MONITOR_MONITOR_H
 #define MONITOR_MONITOR_H
 

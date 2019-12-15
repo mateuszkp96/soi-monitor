@@ -3,5 +3,14 @@ project(monitor)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(monitor main.cpp monitor.h BufferMonitor.h Message.h)
+set(SOURCE_FILES
+        BufferMonitor.h
+        main.cpp
+        Message.h
+        monitor.h
+        Timer.h
+        Utils.h
+        )
+
+add_executable(monitor ${SOURCE_FILES})
 target_link_libraries(monitor pthread)

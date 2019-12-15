@@ -1,7 +1,3 @@
-//
-// Created by mateusz on 12/9/19.
-//
-
 #ifndef MONITOR_MESSAGE_H
 #define MONITOR_MESSAGE_H
 
@@ -13,8 +9,8 @@ enum Priority {
 
 class Message {
 public:
-    Message(Priority p, const std::string &content, int uId, int mId)
-            : priority_(p), content_(content), userId_(uId), messageId_(mId) {}
+    Message(Priority p, const std::string &content, int userId)
+            : priority_(p), content_(content), userId_(userId), timestamp_(0) {}
 
     Priority getPriority() const {
         return priority_;
@@ -28,15 +24,19 @@ public:
         return userId_;
     }
 
-    int getMessageId() const {
-        return messageId_;
+    int getTimestamp() const {
+        return timestamp_;
+    }
+
+    int setTimestamp(int timestamp) {
+        timestamp_ = timestamp;
     }
 
 private:
     Priority priority_;
     std::string content_;
     int userId_;
-    int messageId_;
+    int timestamp_;
 };
 
 #endif //MONITOR_MESSAGE_H

@@ -1,13 +1,12 @@
-//
-// Created by mateusz on 12/9/19.
-//
-
 #ifndef MONITOR_BUFFERMONITOR_H
 #define MONITOR_BUFFERMONITOR_H
 
 #include <memory>
+#include <chrono>
 #include "monitor.h"
 #include "Message.h"
+#include "Utils.h"
+#include "Timer.h"
 
 using PMessage = std::shared_ptr<Message>;
 
@@ -24,6 +23,8 @@ public:
             wait(full_);
         }
 
+        m->setTimestamp(Timer::getInstance().getTimeFromBegin());
+
         switch (m->getPriority()) {
             case HIGH:
                 insertPriorityMessage(m);
@@ -36,6 +37,9 @@ public:
         }
 
         ++count_;
+        ++send_messages_;
+        Utils::printMessageWithTag(m, "SEND");
+        printMessagesInQueue();
 
         if (count_ == 1) {
             signal(empty_);
@@ -53,6 +57,7 @@ public:
         PMessage mes = popMessage();
 
         --count_;
+        ++read_messages_;
         if (count_ == BUFFER_SIZE_ - 1) {
             signal(full_);
         }
@@ -61,20 +66,36 @@ public:
         return mes;
     }
 
+    void printStats() const {
+        std::cout << "SEND: " << send_messages_ << '\t'
+                  << "IN_BUFFER: " << count_ << '\t'
+                  << "READ: " << read_messages_ << std::endl;
+    }
+
+    void printMessagesInQueue() {
+        std::cout << "\t\t\t\t\t\tMessages in buffer: " << buffer_.size() << std::endl;
+        for (auto &msg : buffer_) {
+            Utils::printMessageWithTag(msg, "BUFFER");
+        }
+        std::cout << std::endl;
+    }
+
 private:
     Condition full_, empty_;
     int count_;
+    int send_messages_;
+    int read_messages_;
     const int BUFFER_SIZE_;
 
     std::list<PMessage> buffer_;
     std::list<PMessage>::const_iterator priorityHead_;
 
     void insertPriorityMessage(const PMessage &message) {
-        if (priorityHead_ !=  buffer_.end()){
-            buffer_.insert(priorityHead_, message);
+        if (priorityHead_ != buffer_.end()) {
+            auto next = std::next(priorityHead_, 1);
+            buffer_.insert(next, message);
             priorityHead_ = std::next(priorityHead_, 1);
-        }
-        else {
+        } else {
             // first message with priority
             buffer_.push_front(message);
             priorityHead_ = buffer_.begin();
@@ -93,8 +114,6 @@ private:
         buffer_.pop_front();
         return message;
     }
-
-
 };
 
 #endif //MONITOR_BUFFERMONITOR_H
