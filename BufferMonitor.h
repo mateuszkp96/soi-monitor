@@ -14,6 +14,7 @@ class BufferMonitor : public Monitor {
 public:
     BufferMonitor(int bufferSize) : Monitor(), BUFFER_SIZE_(bufferSize), count_(0) {
         priorityHead_ = buffer_.end();
+        Timer::getInstance(); // initialization of Timer
     }
 
     void enterItem(const PMessage &m) {
